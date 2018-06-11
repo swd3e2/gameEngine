@@ -30,6 +30,7 @@ public class Entity {
 		this.rotY += dy;
 		this.rotZ += dz;
 	}
+	
 	public TexturedModel getModel() {
 		return model;
 	}

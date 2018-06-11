@@ -43,11 +43,12 @@ public class MainGameLoop {
 		ModelTexture texture = new ModelTexture(loader.loadTexture("1"));
 		TexturedModel textureModel = new TexturedModel(model, texture);
 		
-		 Entity entity = new Entity(textureModel, new Vector3f(0,0,-5),0,0,0,1);
+		Entity entity = new Entity(textureModel, new Vector3f(-1,0,0),1,0,0,1);
 		
 		while(!Display.isCloseRequested()) {
+			entity.increasePosition(0.002f, 0, 0);
+			entity.increseRotation(0, 1, 0);
 			renderer.prepare();
-			//game logic
 			shader.start();
 			renderer.render(entity, shader);
 			shader.stop();
