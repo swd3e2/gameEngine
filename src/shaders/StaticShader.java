@@ -3,6 +3,7 @@ package shaders;
 import entities.Camera;
 import entities.Light;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import toolBox.Maths;
 
 public class StaticShader extends ShaderProgram{
@@ -13,12 +14,12 @@ public class StaticShader extends ShaderProgram{
     private int location_transformationMatrix;
     private int location_projectionMatrix;
     private int location_viewMatrix;
-
     private int location_lightPosition;
     private int location_lightColor;
-
     private int location_shineDamper;
     private int location_reflectivity;
+    private int location_useFakeLighting;
+    private int location_skyColor;
 
     public StaticShader()
     {
@@ -35,6 +36,8 @@ public class StaticShader extends ShaderProgram{
         location_lightColor = super.getUniformLocation("lightColor");
         location_shineDamper = super.getUniformLocation("shineDamper");
         location_reflectivity = super.getUniformLocation("reflectivity");
+        location_useFakeLighting = super.getUniformLocation("useFakeLighting");
+        location_skyColor = super.getUniformLocation("skyColor");
     }
 
     public void loadShineVariables(float damper, float reflectivity)
@@ -47,6 +50,11 @@ public class StaticShader extends ShaderProgram{
     {
         super.loadVector(location_lightPosition, light.getPosition());
         super.loadVector(location_lightColor, light.getColor());
+    }
+
+    public void loadSkyColor(float r, float g, float b)
+    {
+        super.loadVector(location_skyColor, new Vector3f(r,g,b));
     }
 
     public void loadTransformationMatrix(Matrix4f matrix)
@@ -72,4 +80,8 @@ public class StaticShader extends ShaderProgram{
         super.loadMatrix(location_viewMatrix, viewMatrix);
     }
 
+    public void loadFakeLightingVariable(boolean useFake)
+    {
+        super.loadBoolean(location_useFakeLighting, useFake);
+    }
 }

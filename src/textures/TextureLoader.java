@@ -19,7 +19,7 @@ public class TextureLoader {
         BufferedImage bi;
 
         try {
-            bi = ImageIO.read(new File(filename));
+            bi = ImageIO.read(new File("res/" + filename));
             width = bi.getWidth();
             height = bi.getHeight();
 
@@ -47,6 +47,7 @@ public class TextureLoader {
 
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println(filename);
         }
     }
 

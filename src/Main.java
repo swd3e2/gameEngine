@@ -2,14 +2,18 @@ import RenderEngine.*;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
-import models.RawModel;
 import models.TexturedModel;
+import objConverter.ModelData;
+import objConverter.OBJFileLoader;
 import org.joml.Vector3f;
-import shaders.StaticShader;
 import terrains.Terrain;
 import textures.ModelTexture;
+import textures.TerrainTexture;
+import textures.TerrainTexturePack;
 import textures.TextureLoader;
-import RenderEngine.OBJLoader;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -19,32 +23,117 @@ public class Main {
             throw new IllegalStateException("Failed to initialize GLFW!");
         }
         DisplayManager.createDisplay();
-
         Loader loader = new Loader();
 
+        //*************************TERRAIN TEXTURE STUFF******************************//
 
-        RawModel model = OBJLoader.loadObjModel("dragon",loader);
-        TexturedModel texturedModel = new TexturedModel(model, new ModelTexture(new TextureLoader("res/2.png").getTextureID()));
-        ModelTexture texture = texturedModel.getTexture();
-        texture.setShineDamper(5);
-        texture.setReflectivity(1);
-        Entity entity = new Entity(texturedModel, new Vector3f(0, 0, 25), 0, 0, 0, 1);
 
-        Terrain terrain = new Terrain(0,0,loader, new ModelTexture(new TextureLoader("res/2.png").getTextureID()));
-        Terrain terrain2 = new Terrain(1,0,loader, new ModelTexture(new TextureLoader("res/2.png").getTextureID()));
+        TerrainTexture backgroundTexture = new TerrainTexture(new TextureLoader("grassy2.png").getTextureID());
+        TerrainTexture rTexture = new TerrainTexture(new TextureLoader("mud.png").getTextureID());
+        TerrainTexture gTexture = new TerrainTexture(new TextureLoader("grassFlowers.png").getTextureID());
+        TerrainTexture bTexture = new TerrainTexture(new TextureLoader("path.png").getTextureID());
 
-        Light light = new Light(new Vector3f(0,25,0), new Vector3f(1,1,1));
+
+        TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
+        TerrainTexture blendMap = new TerrainTexture(new TextureLoader("blendMap.png").getTextureID());
+
+
+
+        //****************************************************************************//
+        ModelData treeObj = OBJFileLoader.loadOBJ("lowPolyTree");
+        TexturedModel staticModel = new TexturedModel(
+                loader.loadToVAO(
+                        treeObj.getVertices(),
+                        treeObj.getTextureCoords(),
+                        treeObj.getNormals(),
+                        treeObj.getIndices()
+                ),
+                new ModelTexture(new TextureLoader("lowPolyTree.png").getTextureID()));
+
+        ModelData grassObj = OBJFileLoader.loadOBJ("grassModel");
+        TexturedModel grass = new TexturedModel(
+                loader.loadToVAO(
+                        grassObj.getVertices(),
+                        grassObj.getTextureCoords(),
+                        grassObj.getNormals(),
+                        grassObj.getIndices()
+                ),
+                new ModelTexture(new TextureLoader("grassTexture.png").getTextureID()));
+        TexturedModel flower = new TexturedModel(
+                loader.loadToVAO(
+                        grassObj.getVertices(),
+                        grassObj.getTextureCoords(),
+                        grassObj.getNormals(),
+                        grassObj.getIndices()
+                ),
+                new ModelTexture(new TextureLoader("flower.png").getTextureID()));
+
+        ModelData fernObj = OBJFileLoader.loadOBJ("fern");
+        TexturedModel fern = new TexturedModel(
+                loader.loadToVAO(
+                        fernObj.getVertices(),
+                        fernObj.getTextureCoords(),
+                        fernObj.getNormals(),
+                        fernObj.getIndices()
+                ),
+                new ModelTexture(new TextureLoader("fern.png").getTextureID()));
+        Random random = new Random();
+
+        grass.getTexture().setHasTransparency(true);
+        grass.getTexture().setUseFakeLighting(true);
+        fern.getTexture().setHasTransparency(true);
+        flower.getTexture().setHasTransparency(true);
+        flower.getTexture().setUseFakeLighting(true);
+
+
+        ArrayList<Entity> treesArray = new ArrayList<Entity>();
+        for (int i = 0; i < 800; i++) {
+            treesArray.add(new Entity(staticModel, new Vector3f(random.nextFloat() * 800 + 200, 0, random.nextFloat() * 800), 0, 0, 0, 1.5f));
+        }
+
+        ArrayList<Entity> grassArray = new ArrayList<Entity>();
+        for (int i = 0; i < 1600; i++) {
+            grassArray.add(new Entity(grass, new Vector3f(random.nextFloat() * 800 + 200 , 0, random.nextFloat() * 800), 0, 0, 0, 1));
+        }
+
+        ArrayList<Entity> plantsArray = new ArrayList<Entity>();
+        for (int i = 0; i < 800; i++) {
+            plantsArray.add(new Entity(flower, new Vector3f(random.nextFloat() * 800 + 200, 0, random.nextFloat() * 800), 0, 0, 0, 1));
+        }
+
+        ArrayList<Entity> fernArray = new ArrayList<Entity>();
+        for (int i = 0; i < 480; i++) {
+            fernArray.add(new Entity(fern, new Vector3f(random.nextFloat() * 800 + 200, 0, random.nextFloat() * 800), 0, 0, 0, 1));
+        }
+
+        /*
+         * Init camera, light and terrain
+         */
+        Terrain terrain = new Terrain(0, 0, loader, texturePack, blendMap);
+        Terrain terrain1 = new Terrain(-1, -1, loader, texturePack, blendMap);
+        Light light = new Light(new Vector3f(300,10,150), new Vector3f(1,1,1));
         Camera camera = new Camera();
 
         MasterRenderer renderer = new MasterRenderer();
 
         while(!DisplayManager.closeDisplay()) {
-            entity.increaseRotation(0, 0.5f, 0);
-            camera.move();
 
-            renderer.processEntity(entity);
+            camera.move();
+            light.move();
+            for (Entity entity: treesArray) {
+                renderer.processEntity(entity);
+            }
+            for (Entity entity: grassArray) {
+                renderer.processEntity(entity);
+            }
+            for (Entity entity: plantsArray) {
+                renderer.processEntity(entity);
+            }
+            for (Entity entity: fernArray) {
+                renderer.processEntity(entity);
+            }
             renderer.processTerrain(terrain);
-            renderer.processTerrain(terrain2);
+            renderer.processTerrain(terrain1);
 
 
             renderer.render(light, camera);

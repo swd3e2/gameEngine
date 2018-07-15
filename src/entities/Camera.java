@@ -8,7 +8,7 @@ import java.awt.event.KeyEvent;
 
 public class Camera {
 
-    private Vector3f position = new Vector3f(0,10,100);
+    private Vector3f position = new Vector3f(300,3,200);
     private float pitch;
     private float yaw;
     private float roll;
