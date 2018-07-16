@@ -2,6 +2,7 @@ import RenderEngine.*;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
+import entities.Player;
 import models.TexturedModel;
 import objConverter.ModelData;
 import objConverter.OBJFileLoader;
@@ -105,20 +106,32 @@ public class Main {
         for (int i = 0; i < 480; i++) {
             fernArray.add(new Entity(fern, new Vector3f(random.nextFloat() * 800 + 200, 0, random.nextFloat() * 800), 0, 0, 0, 1));
         }
-
+    //*****************************PLAYER STUFF***************************************//
+        ModelData playerStatic = OBJFileLoader.loadOBJ("stanfordBunny");
+        TexturedModel playerModel = new TexturedModel(
+                loader.loadToVAO(
+                        playerStatic.getVertices(),
+                        playerStatic.getTextureCoords(),
+                        playerStatic.getNormals(),
+                        playerStatic.getIndices()
+                ),
+                new ModelTexture(new TextureLoader("2.png").getTextureID()));
+        Player player = new Player(playerModel, new Vector3f(300,10,140), 0,0,0, 1);
+        //****************************************************************************//
         /*
          * Init camera, light and terrain
          */
         Terrain terrain = new Terrain(0, 0, loader, texturePack, blendMap);
         Terrain terrain1 = new Terrain(-1, -1, loader, texturePack, blendMap);
         Light light = new Light(new Vector3f(300,10,150), new Vector3f(1,1,1));
-        Camera camera = new Camera();
+        Camera camera = new Camera(player);
 
         MasterRenderer renderer = new MasterRenderer();
 
         while(!DisplayManager.closeDisplay()) {
 
             camera.move();
+            player.move();
             light.move();
             for (Entity entity: treesArray) {
                 renderer.processEntity(entity);
@@ -132,6 +145,7 @@ public class Main {
             for (Entity entity: fernArray) {
                 renderer.processEntity(entity);
             }
+            renderer.processEntity(player);
             renderer.processTerrain(terrain);
             renderer.processTerrain(terrain1);
 
