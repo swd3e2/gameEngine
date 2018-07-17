@@ -107,7 +107,7 @@ public class Main {
             fernArray.add(new Entity(fern, new Vector3f(random.nextFloat() * 800 + 200, 0, random.nextFloat() * 800), 0, 0, 0, 1));
         }
     //*****************************PLAYER STUFF***************************************//
-        ModelData playerStatic = OBJFileLoader.loadOBJ("stanfordBunny");
+        ModelData playerStatic = OBJFileLoader.loadOBJ("kn1");
         TexturedModel playerModel = new TexturedModel(
                 loader.loadToVAO(
                         playerStatic.getVertices(),
