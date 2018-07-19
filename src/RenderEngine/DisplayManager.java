@@ -2,6 +2,7 @@ package RenderEngine;
 
 import input.CursorHandler;
 import input.KeyboardHandler;
+import input.MouseButtonsHandler;
 import input.MouseScrollHandler;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
@@ -14,9 +15,6 @@ public class DisplayManager {
     private static final int HEIGHT = 960;
     private static long window;
     private static GLFWVidMode videoMode;
-    private static GLFWKeyCallback keyCallback;
-    private static GLFWScrollCallback scroll_callback;
-    private static GLFWCursorPosCallback cursor_pos_callback;
     private static float lastFrameTime;
     private static float delta;
 
@@ -27,9 +25,10 @@ public class DisplayManager {
             throw new IllegalStateException("Failed to create window");
         }
         // Init keyhandler
-        glfwSetKeyCallback(window, keyCallback = new KeyboardHandler());
-        glfwSetScrollCallback(window, scroll_callback = new MouseScrollHandler());
-        glfwSetCursorPosCallback(window, cursor_pos_callback = new CursorHandler());
+        glfwSetKeyCallback(window, new KeyboardHandler());
+        glfwSetScrollCallback(window, new MouseScrollHandler());
+        glfwSetCursorPosCallback(window, new CursorHandler());
+        glfwSetMouseButtonCallback(window, new MouseButtonsHandler());
 
         videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         glfwSetWindowPos(window, (videoMode.width() - WIDTH) / 2, (videoMode.height() - HEIGHT) / 2);

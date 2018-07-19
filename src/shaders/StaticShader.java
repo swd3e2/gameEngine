@@ -20,6 +20,8 @@ public class StaticShader extends ShaderProgram{
     private int location_reflectivity;
     private int location_useFakeLighting;
     private int location_skyColor;
+    private int location_numberOfRows;
+    private int location_offset;
 
     public StaticShader()
     {
@@ -38,6 +40,18 @@ public class StaticShader extends ShaderProgram{
         location_reflectivity = super.getUniformLocation("reflectivity");
         location_useFakeLighting = super.getUniformLocation("useFakeLighting");
         location_skyColor = super.getUniformLocation("skyColor");
+        location_numberOfRows = super.getUniformLocation("numberOfRows");
+        location_offset = super.getUniformLocation("offset");
+    }
+
+    public void loadNumberOfRows(int numberOfRows)
+    {
+        super.loadFloat(location_numberOfRows, numberOfRows);
+    }
+
+    public void loadOffset(float x, float y)
+    {
+        super.loadVector2f(location_offset, x, y);
     }
 
     public void loadShineVariables(float damper, float reflectivity)

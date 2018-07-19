@@ -113,4 +113,9 @@ abstract public class ShaderProgram {
     {
         GL20.glUniformMatrix4fv(location, false, matrix.get(matrixBuffer));
     }
+
+    protected void loadVector2f(int location, float x, float y)
+    {
+        GL20.glUniform2f(location, x, y);
+    }
 }

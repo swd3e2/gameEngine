@@ -2,6 +2,7 @@ package entities;
 
 import input.CursorHandler;
 import input.KeyboardHandler;
+import input.MouseButtonsHandler;
 import input.MouseScrollHandler;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -13,7 +14,7 @@ public class Camera {
     private float distanceFromPlayer = 50;
     private float angleAroundPalyer = 0;
 
-    private Vector3f position = new Vector3f(300,20,200);
+    private Vector3f position = new Vector3f(300,120,200);
     private float pitch = 20;
     private float yaw;
     private float roll;
@@ -78,7 +79,7 @@ public class Camera {
 
     private void calculatePitch()
     {
-        if (CursorHandler.isIsMouseMoved() && KeyboardHandler.isKeyDown(GLFW.GLFW_KEY_L)) {
+        if (CursorHandler.isIsMouseMoved() && MouseButtonsHandler.isLeftMousePressed()) {
             float pitchChange = (float)CursorHandler.getyPosChange()/ 4;
             pitch -= pitchChange;
         }
@@ -86,9 +87,9 @@ public class Camera {
 
     private void calculateAngleAroundPlayer()
     {
-        if (CursorHandler.isIsMouseMoved() && KeyboardHandler.isKeyDown(GLFW.GLFW_KEY_O)) {
-            float angleChange = (float) CursorHandler.getxPos();
-            angleAroundPalyer -= angleChange;
+        if (CursorHandler.isIsMouseMoved() && MouseButtonsHandler.isLeftMousePressed()) {
+            float angleChange = (float) CursorHandler.getxPos() / 4;
+            angleAroundPalyer += angleChange;
         }
     }
 
